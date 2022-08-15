@@ -9,3 +9,9 @@ Else
     Set wbk1 = Workbooks.Open(Filename:=FTO)
     
 End If
+
+'To get the last row
+
+ LrowT1 = Dsheet.Cells(Rows.Count, 1).End(xlUp).Row
+ Lrow1 = wbk2.Worksheets(1).Cells(Rows.Count, 1).End(xlUp).Row
+ 
