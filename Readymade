@@ -1,0 +1,11 @@
+'Open the Master template
+
+FTO = Application.GetOpenFilename(Title:="Please choose the 'TST Backlog Status Template' ", FileFilter:="Report Files *.xlsb (*.xlsb),")
+
+If FTO = False Then
+    MsgBox "Sorry ! No File Specified.", vbExclamation, "ERROR"
+    Exit Sub
+Else
+    Set wbk1 = Workbooks.Open(Filename:=FTO)
+    
+End If
