@@ -1,0 +1,123 @@
+' This data splitter macro filter out the different categories from column B in the Master data sheet and make separate worksheets for each categories
+
+
+Sub Acc_name_sep()
+
+Dim wbk1 As Workbook
+Dim MDsheet As Worksheet
+Dim Tsheet As Worksheet
+Dim lct As Integer
+Dim nwbk As Workbook
+Dim nwsh As Worksheet
+Dim wbk2 As Workbook ' macro
+Dim Msheet As Worksheet
+Dim LrowT1 As Long
+
+Set wbk2 = ThisWorkbook
+Set Msheet = wbk2.Worksheets("Data Splitter")
+'Open the Master template
+
+FTO = Application.GetOpenFilename(Title:="Please choose the 'Master Data file' ", FileFilter:="Report Files *.xlsx (*.xlsx),")
+
+If FTO = False Then
+    MsgBox "Sorry ! No File Specified.", vbExclamation, "ERROR"
+    Exit Sub
+Else
+    Set wbk1 = Workbooks.Open(Filename:=FTO)
+    
+End If
+
+
+Application.ScreenUpdating = False
+Application.DisplayAlerts = False
+
+Set MDsheet = wbk1.Sheets(1)
+
+'get list of acc names
+
+MDsheet.Select
+
+Sheets.Add After:=ActiveSheet
+Set Tsheet = wbk1.Sheets(2)
+
+MDsheet.Select
+ActiveSheet.Columns("A:A").Select
+Selection.Copy
+Tsheet.Select
+ActiveSheet.Range("A1").Select
+ActiveSheet.Paste
+Application.CutCopyMode = False
+ActiveSheet.Range("A:A").RemoveDuplicates Columns:=1, Header:=xlYes
+
+Tsheet.Range("A1").Select
+
+'create separate files
+
+For lct = 2 To Application.CountA(Tsheet.Range("A:A"))
+    MDsheet.UsedRange.AutoFilter 1, Tsheet.Range("A" & lct).Value
+    
+    Set nwbk = Workbooks.Add
+    Set nwsh = nwbk.Sheets(1)
+    
+    nwsh.Activate
+    ActiveWindow.DisplayGridlines = False
+
+    MDsheet.UsedRange.SpecialCells(xlCellTypeVisible).Copy nwsh.Range("A1")
+    nwbk.SaveAs Msheet.Range("J4").Value & "/" & Tsheet.Range("A" & lct).Value & ".xlsx"
+    
+    LrowT1 = nwsh.Cells(Rows.Count, 1).End(xlUp).Row
+    nwsh.Range("A1:U" & LrowT1).Select
+    
+    Range(Selection, ActiveCell.SpecialCells(xlLastCell)).Select
+    
+    With Selection.Borders(xlEdgeLeft)
+        .LineStyle = xlContinuous
+        .Weight = xlMedium
+    End With
+    With Selection.Borders(xlEdgeTop)
+        .LineStyle = xlContinuous
+        .Weight = xlMedium
+    End With
+    With Selection.Borders(xlEdgeBottom)
+        .LineStyle = xlContinuous
+        .Weight = xlMedium
+    End With
+    With Selection.Borders(xlEdgeRight)
+        .LineStyle = xlContinuous
+        .Weight = xlMedium
+    End With
+    With Selection.Borders(xlInsideVertical)
+        .LineStyle = xlContinuous
+        .Weight = xlThin
+    End With
+    With Selection.Borders(xlInsideHorizontal)
+        .LineStyle = xlContinuous
+        .Weight = xlThin
+    End With
+    
+    nwsh.Columns("E:E").Select
+    ActiveWindow.FreezePanes = True
+    nwsh.Cells.Select
+    Selection.Locked = False
+    Range("A1:U1").Select
+    Selection.AutoFilter
+    Selection.Locked = True
+    Range("A2:O" & LrowT1).Select
+    Selection.Locked = True
+    ActiveSheet.Protect Password:="openup", DrawingObjects:=True, Contents:=True, Scenarios:=True, AllowSorting:=True, AllowFiltering:=True
+    ActiveSheet.Name = "Sourcing Tracker"
+    Range("P2").Select
+    nwbk.Save
+    nwbk.Close
+    MDsheet.AutoFilterMode = False
+Next lct
+
+Tsheet.Delete
+wbk1.Close
+Application.ScreenUpdating = True
+Application.DisplayAlerts = True
+
+MsgBox "Files got created Successfully @ " & Msheet.Range("J4").Value & " !! "
+
+End Sub
+
