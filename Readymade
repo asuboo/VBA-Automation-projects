@@ -24,7 +24,7 @@ Application.DisplayAlerts = False
 
  MDsheet.UsedRange.SpecialCells(xlCellTypeVisible).Copy nwsh.Range("A1")
  
- ' o protect the sheet
+ ' To protect the sheet
  
  ActiveSheet.Protect Password:="openup", DrawingObjects:=True, Contents:=True, Scenarios:=True, AllowSorting:=True, AllowFiltering:=True
  
