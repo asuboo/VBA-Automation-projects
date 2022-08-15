@@ -15,3 +15,16 @@ End If
  LrowT1 = Dsheet.Cells(Rows.Count, 1).End(xlUp).Row
  Lrow1 = wbk2.Worksheets(1).Cells(Rows.Count, 1).End(xlUp).Row
  
+ 'Best practises:
+ 
+Application.ScreenUpdating = False
+Application.DisplayAlerts = False
+
+' Copy visible rows from the Master template and paste it in a different sheet
+
+ MDsheet.UsedRange.SpecialCells(xlCellTypeVisible).Copy nwsh.Range("A1")
+ 
+ ' o protect the sheet
+ 
+ ActiveSheet.Protect Password:="openup", DrawingObjects:=True, Contents:=True, Scenarios:=True, AllowSorting:=True, AllowFiltering:=True
+ 
