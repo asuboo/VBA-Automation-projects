@@ -28,3 +28,14 @@ Application.DisplayAlerts = False
  
  ActiveSheet.Protect Password:="openup", DrawingObjects:=True, Contents:=True, Scenarios:=True, AllowSorting:=True, AllowFiltering:=True
  
+' To create dependent dropdown list in excel in the 'Project Transactions' sheet; cell E2 - product type; cell E3 - Parent ID, cell E4 - Child ID
+
+eg. 'Product Type' ---> 'Parent ID' --> 'Child ID'
+a. To capture the unique 'Product type' data from the 'Program Info' sheet in Col F
+=SORT(UNIQUE(FILTER('Program Info'!$F$2:$F$100,'Program Info'!$F$2:$F$100<>""),FALSE,FALSE),,1)
+
+b. To take out the unique 'Parent id'(in Col A) related to the 'Product Type'(in Col F) in the 'Program Info' sheet
+=SORT(UNIQUE(FILTER('Program Info'!$A$2:$A$100,'Program Info'!$F$2:$F$100='Project Transactions'!$E$2)),,1)
+
+c. To take out the unique 'Child id'(in Col B in 'Project Info' sheet) related to the 'Parent ID'(in Col A in the 'Project info' sheet) 
+=IF(IFERROR(SORT(UNIQUE(FILTER('Project Info'!$B$2:$B$400,('Project Info'!$A$2:$A$400='Project Transactions'!E3),"")),,1),"No Data") = 0,"",IFERROR(SORT(UNIQUE(FILTER('Project Info'!$B$2:$B$400,('Project Info'!$A$2:$A$400='Project Transactions'!E3),"")),,1),"No Data"))
