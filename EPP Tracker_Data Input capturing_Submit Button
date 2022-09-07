@@ -1,0 +1,145 @@
+'This Macro will capture input from the 'Project Transactions' sheet to the 'Project Info' or he 'Program Info' sheet
+
+Private Sub cmdSubmit_Click()
+
+    Dim ptype As String
+    Dim pid As String
+    Dim cid As String
+    Dim d8 As Date
+    Dim rnum As Integer ' to get the row number after applying the filter
+    Dim m As Integer ' CAPEX monthly loop
+    Dim m1 As Currency 'CAPEX monthly currency
+    Dim n As Integer ' new value Col CAPEX loop
+    Dim c1 As Currency ' new value Col CAPEX data
+    Dim I8 As Currency ' for CAPEX monthly data
+    Dim o As Integer ' new value col OPEX loop
+    Dim c2 As Variant ' for new value Col OPEX data mix of dates & currency
+    
+    
+    Dim eform As Worksheet
+    Dim wsheet As Worksheet
+    
+    Set eform = ThisWorkbook.Worksheets("Project Transactions")
+    Set wsheet = ThisWorkbook.Worksheets("Project Info")
+    
+    
+    Application.ScreenUpdating = False
+    Application.Calculation = xlCalculationManual
+    
+    ptype = eform.Range("E2").Value
+    pid = eform.Range("E3").Value
+    cid = eform.Range("E4").Value
+    d8 = eform.Range("E8").Value
+    I8 = eform.Range("J8").Value
+    d13 = eform.Range("E13").Value
+    
+
+    'ActiveWorkbook.Unprotect "openup"
+    'wsheet.Visible = xlSheetVisible
+    
+    wsheet.Select
+    
+    ActiveSheet.Unprotect "openup"
+    
+    ActiveSheet.Columns("S:XFD").EntireColumn.Hidden = False
+    'ActiveSheet.Columns("M:R").EntireColumn.Hidden = False
+    'ActiveSheet.Columns("AA:BI").EntireColumn.Hidden = False
+    
+    On Error Resume Next
+    ActiveSheet.ShowAllData
+    
+    'wsheet.UsedRange.AutoFilter Field:=6, Criteria1:=ptype
+    'wsheet.UsedRange.AutoFilter Field:=1, Criteria1:=pid
+    'wsheet.UsedRange.AutoFilter Field:=2, Criteria1:=cid
+    
+    'Rows("101:101").Select
+    'Selection.AutoFilter
+    
+    If ActiveSheet.AutoFilterMode Then
+        ActiveSheet.AutoFilterMode = False
+    End If
+    
+    
+    wsheet.Range("A1:BK1").AutoFilter Field:=1, Criteria1:=pid
+    wsheet.Range("A1:BK1").AutoFilter Field:=2, Criteria1:=cid
+    
+    ActiveSheet.AutoFilter.Range.Offset(1, 0).SpecialCells(xlCellTypeVisible).Cells(1, 1).Select
+    rnum = ActiveCell.Row
+    
+    
+    'for New value Col data for CAPEX
+    ActiveSheet.Range("T" & rnum).Select
+    'If d8 <> "12:00:00 AM" Then
+    'If d9 <> 0 Then
+    'If Len(d9) <> 0 Then
+    If IsEmpty(eform.Range("E8").Value) = False Then
+    ActiveCell.Value = d8
+    End If
+    For n = 9 To 12
+        c1 = eform.Range("E" & n).Value
+        ActiveCell.Offset(0, 1).Range("A1").Select
+            If IsEmpty(eform.Range("E" & n).Value) = False Then
+                ActiveCell.FormulaR1C1 = c1
+            End If
+    Next n
+    
+    
+    'for CAPEX monthly data
+    ActiveCell.Offset(0, 12).Range("A1").Select
+    If IsEmpty(eform.Range("J8").Value) = False Then
+    ActiveCell.FormulaR1C1 = I8
+    End If
+    For m = 9 To 19
+        m1 = eform.Range("J" & m).Value
+        ActiveCell.Offset(0, 1).Range("A1").Select
+            If IsEmpty(eform.Range("J" & m).Value) = False Then
+                ActiveCell.FormulaR1C1 = m1
+            End If
+    Next m
+    
+     'for New value Col data for OPEX
+    ActiveSheet.Range("AA" & rnum).Select
+
+    If IsEmpty(eform.Range("E13").Value) = False Then
+    ActiveCell.Value = d13
+    End If
+    For o = 14 To 20
+        c2 = eform.Range("E" & o).Value
+        ActiveCell.Offset(0, 1).Range("A1").Select
+            If IsEmpty(eform.Range("E" & o).Value) = False Then
+                ActiveCell.FormulaR1C1 = c2
+            End If
+    Next o
+    
+
+    
+    On Error Resume Next
+    ActiveSheet.ShowAllData
+    
+    If Not ActiveSheet.AutoFilterMode Then
+    ActiveSheet.Rows("1:1").AutoFilter
+    End If
+    
+    ActiveSheet.Columns("S:XFD").EntireColumn.Hidden = True
+    'ActiveSheet.Columns("M:R").EntireColumn.Hidden = True
+    'ActiveSheet.Columns("Z:XFD").EntireColumn.Hidden = True
+    'ActiveSheet.Columns("AA:BI").EntireColumn.Hidden = True
+    
+    ActiveSheet.Protect "openup"
+    
+    eform.Activate
+    Range("E8:E20").ClearContents
+    Range("J8:J19").ClearContents
+  
+    Range("E8").Select
+    
+    'wsheet.Visible = xlSheetVeryHidden
+    ActiveWorkbook.Save
+    'ActiveWorkbook.Protect "openup"
+    
+    
+    
+    Application.ScreenUpdating = True
+    Application.Calculation = xlCalculationAutomatic
+
+End Sub
