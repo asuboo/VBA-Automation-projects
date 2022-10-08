@@ -1,0 +1,289 @@
+Option Explicit
+
+Sub MJE_Alpha()
+
+' To create MJE
+
+Dim i As Integer
+Dim ct As Integer ' to capture the end row cell
+'Dim ct1 As Integer
+Dim offs As Variant ' for offset a/c number
+'Dim ct2 As Integer  ' to capture the end row cell
+Dim x As Integer ' for loop counter
+Dim y As Integer ' for row counter
+
+' To put serial number
+
+Application.ScreenUpdating = False
+
+Worksheets("Data Sheet").Range("C3").Activate
+i = 1
+
+Do
+
+If ActiveCell.Value = "" Then Exit Do
+ActiveCell.Offset(0, -2).Activate
+ActiveCell.Value = i
+ActiveCell.Offset(1, 2).Activate
+i = i + 1
+
+Loop
+
+' copy paste serial numbers
+
+Worksheets("Data Sheet").Range("A3").Select
+    Range(Selection, Selection.End(xlDown)).Select
+    ct = Application.WorksheetFunction.Count(Selection, Selection.End(xlDown))
+    Selection.Copy
+    Worksheets("Data Sheet").Range("A" & (ct + 2)).Select ' two row below the number starts
+    ActiveSheet.Paste
+    
+' sort serial numbers in ascending order
+Worksheets("Data Sheet").Range("A3").Select
+Application.CutCopyMode = False
+    Range(Selection, Selection.End(xlDown)).Select
+    ct = Application.WorksheetFunction.Count(Selection, Selection.End(xlDown))
+    ActiveWorkbook.Worksheets("Data Sheet").Sort.SortFields.Clear
+    ActiveWorkbook.Worksheets("Data Sheet").Sort.SortFields.Add Key:=Range("A3"), _
+        SortOn:=xlSortOnValues, Order:=xlAscending, DataOption:=xlSortNormal
+    With ActiveWorkbook.Worksheets("Data Sheet").Sort
+        .SetRange Range("A3:G900")
+        '.SetRange Range("A3:G38") this needs to be changed with variable ct1
+        .Header = xlNo
+        .MatchCase = False
+        .Orientation = xlTopToBottom
+        .SortMethod = xlPinYin
+        .Apply
+    End With
+  
+' adding the offset account number on alternate blank cells
+
+offs = Range("M1").Value
+
+Worksheets("Data Sheet").Range("A3").Select
+Range(Selection, Selection.End(xlDown)).Select
+ct = Application.WorksheetFunction.Count(Selection, Selection.End(xlDown))
+ct = ct - 1
+
+Worksheets("Data Sheet").Range("C4").Select
+Worksheets("Data Sheet").Range("C4").Value = offs
+y = 4
+
+For x = 1 To ((ct / 2) - 1)
+
+y = y + 2
+Worksheets("Data Sheet").Range("C" & y).Select
+ActiveCell.Value = offs
+
+Next x
+
+Call updat
+
+Call ENDR
+
+Call ClearZero
+
+Application.ScreenUpdating = True
+
+End Sub
+
+
+
+Private Sub updat()
+
+' update the debit credit values for the offset a/c
+
+Dim ct3 As Integer ' to capture the end row cell
+Dim S2 As Double ' for credit amount
+Dim k As Integer ' for loop counter
+Dim j As Integer ' for row counter
+Dim s1 As Double ' for debit amount
+
+Application.ScreenUpdating = False
+
+Worksheets("Data Sheet").Range("A3").Select
+Range(Selection, Selection.End(xlDown)).Select
+ct3 = Application.WorksheetFunction.Count(Selection, Selection.End(xlDown))
+Worksheets("Data Sheet").Range("G3").Select
+ct3 = ct3 - 1
+j = 3
+
+    For k = 1 To (ct3 / 2)
+    
+        If ActiveCell.Value = 0 Then
+        ActiveCell.Offset(0, 1).Activate
+        s1 = ActiveCell.Value
+        ActiveCell.Offset(1, -1).Value = s1
+        Else
+        S2 = ActiveCell.Value
+        ActiveCell.Offset(1, 1).Value = S2
+        End If
+        
+        j = j + 2
+        Worksheets("Data Sheet").Range("G" & j).Select
+        
+    Next k
+    
+Application.ScreenUpdating = True
+    
+
+End Sub
+Sub ENDR()
+'
+' ENDR Macro
+'
+
+'To format the pasted data as values
+
+Dim ct4 As Integer ' to capture the end row cell
+Worksheets("Data Sheet").Range("A3").Select
+Range(Selection, Selection.End(xlDown)).Select
+ct4 = Application.WorksheetFunction.Count(Selection, Selection.End(xlDown))
+ct4 = ct4 - 1
+    
+    Worksheets("Data Sheet").Range("A3:H" & (ct4 + 2)).Select
+    Range(Selection, Selection.End(xlDown)).Select
+    Selection.Copy
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+        :=False, Transpose:=False
+    Application.CutCopyMode = False
+    With Selection.Interior
+        .Pattern = xlNone
+        .TintAndShade = 0
+        .PatternTintAndShade = 0
+    End With
+    With Selection
+        .HorizontalAlignment = xlCenter
+        .VerticalAlignment = xlBottom
+        .ReadingOrder = xlContext
+    End With
+    
+    Selection.Borders(xlDiagonalDown).LineStyle = xlNone
+    Selection.Borders(xlDiagonalUp).LineStyle = xlNone
+    Selection.Borders(xlEdgeLeft).LineStyle = xlNone
+    Selection.Borders(xlEdgeTop).LineStyle = xlNone
+    Selection.Borders(xlEdgeBottom).LineStyle = xlNone
+    Selection.Borders(xlEdgeRight).LineStyle = xlNone
+    Selection.Borders(xlInsideVertical).LineStyle = xlNone
+    Selection.Borders(xlInsideHorizontal).LineStyle = xlNone
+    
+End Sub
+
+Sub ClearZero()
+Dim x As Integer
+Dim ct2 As Integer
+
+' replacing zeros with blank cells so that pasting in the actual mje helps
+
+
+Worksheets("Data Sheet").Range("A3").Select
+Range(Selection, Selection.End(xlDown)).Select
+ct2 = Application.WorksheetFunction.Count(Selection, Selection.End(xlDown))
+
+Worksheets("Data Sheet").Range("G3").Select
+x = 2
+Do Until x = ct2 + 1
+x = x + 1
+Sheets("Data Sheet").Range("G" & x).Select
+If Sheets("Data Sheet").Range("G" & x).Value = 0 Then
+Sheets("Data Sheet").Range("G" & x).Value = ""
+End If
+Loop
+
+Worksheets("Data Sheet").Range("H3").Select
+x = 2
+Do Until x = ct2 + 1
+x = x + 1
+Sheets("Data Sheet").Range("H" & x).Select
+If Sheets("Data Sheet").Range("H" & x).Value = 0 Then
+Sheets("Data Sheet").Range("H" & x).Value = ""
+End If
+Loop
+
+' clear the serial numbers in column A
+    Worksheets("Data Sheet").Columns("A:A").Select
+    Selection.ClearContents
+    Worksheets("Data Sheet").Range("B3").Select
+
+
+End Sub
+
+
+
+Sub rest_mje()
+'the below code is captured in the command button of data sheet
+
+'
+
+'to do paste special and formatting values
+
+Dim ct As Integer ' to capture the end row cell
+Dim i As Integer ' for serial number
+
+Application.ScreenUpdating = False
+
+' To put serial number
+
+Worksheets("Data Sheet").Select
+Range("C3").Activate
+i = 1
+
+Do
+
+If ActiveCell.Value = "" Then Exit Do
+ActiveCell.Offset(0, -2).Activate
+ActiveCell.Value = i
+ActiveCell.Offset(1, 2).Activate
+i = i + 1
+
+Loop
+
+Range("A3").Select
+Range(Selection, Selection.End(xlDown)).Select
+ct = Application.WorksheetFunction.Count(Selection, Selection.End(xlDown))
+
+'to delete the data in the cell range
+Range("B3:H" & (ct + 1)).Select
+Selection.ClearContents
+
+'to select the reference formatting
+    Range("E1400:H1400").Select ' taken the formula of THIS ROW
+    Selection.Copy
+    
+'to do the paste special in destination
+    Range("E3:H" & (ct + 1)).Select
+    Selection.PasteSpecial Paste:=xlPasteFormulas, Operation:=xlNone, _
+        SkipBlanks:=False, Transpose:=False
+           
+ 'to select the reference formatting
+    Range("E1400:H1400").Select
+    Application.CutCopyMode = False
+    Selection.Copy
+    
+'to do the formatting in destination
+    Range("E3:H" & (ct + 1)).Select
+    Selection.PasteSpecial Paste:=xlPasteFormats, Operation:=xlNone, _
+        SkipBlanks:=False, Transpose:=False
+    Application.CutCopyMode = False
+    ActiveWorkbook.Save
+   
+' clear the serial numbers in column A
+    Columns("A:A").Select
+    Selection.ClearContents
+    Range("B3").Select
+
+Application.ScreenUpdating = True
+
+End Sub
+
+
+
+
+
+
+
+
+
+
+
+
