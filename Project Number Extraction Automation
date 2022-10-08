@@ -1,0 +1,220 @@
+Sub numblevel1()
+
+    Dim i As Long
+    Dim j As Long
+    Dim wbk1 As Workbook
+    Dim wbk2 As Workbook
+    Dim wsData As Worksheet
+    Dim FileToOpen
+    
+    Set wbk1 = ActiveWorkbook
+    
+    Dim regexObject As Object: Set regexObject = CreateObject("vbscript.regexp")
+    Dim regexAllResults As Object ' Variable that will hold all matches in a given string !
+    Dim regexOneResult As String ' Variable that will hold only one match, it will be used in a loop !
+    
+    Dim wsDataStartingRow As Long: wsDataStartingRow = 2 ' We start from the second row, first is header row !
+    Dim wsDataEndingRow As Long
+    Dim wsDataCurrentValue As String ' Variable, used in a loop, that will hold the current string that we are processing !
+
+    ' Defining pattern !
+    regexObject.Pattern = "\b10(0|1|2)\d{5}\b"
+    regexObject.Global = True
+    regexObject.IgnoreCase = True
+    
+    'open the TR extract file
+
+FileToOpen = Application.GetOpenFilename _
+(Title:="Please choose the TR Extract", _
+FileFilter:="Report Files *.xlsx (*.xlsx),")
+
+If FileToOpen = False Then
+    MsgBox "No File Specified.", vbExclamation, "ERROR"
+    Exit Sub
+Else
+    Set wbk2 = Workbooks.Open(Filename:=FileToOpen)
+    
+End If
+
+Set wsData = wbk2.Sheets("Data")
+ 
+wsDataEndingRow = wsData.Cells(Rows.Count, 1).End(xlUp).Row ' Ending row in column A (first column) !
+ 
+wsData.Cells(1, 41).Value = "Project Number"
+    
+    ' Extracting data !
+    For i = wsDataStartingRow To wsDataEndingRow
+    
+        wsDataCurrentValue = Trim(wsData.Cells(i, 39).Value2)
+        
+        If regexObject.Test(wsDataCurrentValue) Then
+            
+            ' Extract all results !
+            Set regexAllResults = regexObject.Execute(wsDataCurrentValue)
+            
+            ' Output all results from column B !
+            For j = 0 To regexAllResults.Count - 1 'captures the count of project numbers and put it in different columns
+            
+                wsData.Cells(i, j + 41).Value2 = regexAllResults.Item(j)
+            
+            Next j
+        
+        End If
+    
+    Next i
+    
+End Sub
+
+Sub numblevel2()
+
+    Dim i As Long
+    Dim j As Long
+    Dim wbk1 As Workbook
+    Dim wbk2 As Workbook
+    Dim wsData As Worksheet
+    Dim FileToOpen
+    
+    Set wbk1 = ActiveWorkbook
+    
+    Dim regexObject As Object: Set regexObject = CreateObject("vbscript.regexp")
+    Dim regexAllResults As Object ' Variable that will hold all matches in a given string !
+    Dim regexOneResult As String ' Variable that will hold only one match, it will be used in a loop !
+    
+    Dim wsDataStartingRow As Long: wsDataStartingRow = 2 ' We start from the second row, first is header row !
+    Dim wsDataEndingRow As Long
+    Dim wsDataCurrentValue As String ' Variable, used in a loop, that will hold the current string that we are processing !
+
+    ' Defining pattern !
+    'regexObject.Pattern = "\b10(0|1|2)\d{5}\b"
+    regexObject.Pattern = "10(0|1|2)\d{5}"
+    regexObject.Global = True
+    regexObject.IgnoreCase = True
+    
+    'open the TR extract file
+
+FileToOpen = Application.GetOpenFilename _
+(Title:="Please choose the TR Extract", _
+FileFilter:="Report Files *.xlsx (*.xlsx),")
+
+If FileToOpen = False Then
+    MsgBox "No File Specified.", vbExclamation, "ERROR"
+    Exit Sub
+Else
+    Set wbk2 = Workbooks.Open(Filename:=FileToOpen)
+    
+End If
+
+Set wsData = wbk2.Sheets("Data")
+ 
+wsDataEndingRow = wsData.Cells(Rows.Count, 1).End(xlUp).Row ' Ending row in column A (first column) !
+    
+    ' Extracting data !
+    For i = wsDataStartingRow To wsDataEndingRow
+    
+        wsDataCurrentValue = Trim(wsData.Cells(i, 39).Value2)
+        
+        If regexObject.Test(wsDataCurrentValue) Then
+            
+            ' Extract all results !
+            Set regexAllResults = regexObject.Execute(wsDataCurrentValue)
+            
+            ' Output all results from column B !
+            For j = 0 To regexAllResults.Count - 1 'captures the count of project numbers and put it in different columns
+            
+                wsData.Cells(i, j + 44).Value2 = regexAllResults.Item(j)
+            
+            Next j
+        
+        End If
+    
+    Next i
+    
+End Sub
+
+Sub extranum()
+
+    Dim i As Long
+    Dim j As Long
+    Dim wbk1 As Workbook
+    Dim wbk2 As Workbook
+    Dim wsData As Worksheet
+    Dim drange As Range
+    Dim cell As Object
+    Dim FileToOpen
+    
+    Set wbk1 = ActiveWorkbook
+    
+    Dim regexObject As Object: Set regexObject = CreateObject("vbscript.regexp")
+    Dim regexAllResults As Object ' Variable that will hold all matches in a given string !
+    Dim regexOneResult As String ' Variable that will hold only one match, it will be used in a loop !
+    
+    Dim wsDataStartingRow As Long: wsDataStartingRow = 2 ' We start from the second row, first is header row !
+    Dim wsDataEndingRow As Long
+    Dim wsDataCurrentValue As String ' Variable, used in a loop, that will hold the current string that we are processing !
+
+    ' Defining pattern !
+    regexObject.Pattern = "10(0|1|2)\d{5}"
+    regexObject.Global = True
+    regexObject.IgnoreCase = True
+    
+    'open the TR extract file
+
+FileToOpen = Application.GetOpenFilename _
+(Title:="Please choose the TR Extract", _
+FileFilter:="Report Files (*.xlsx)*.xlsx;*.xls ,")
+
+If FileToOpen = False Then
+    MsgBox "No File Specified.", vbExclamation, "ERROR"
+    Exit Sub
+Else
+    Set wbk2 = Workbooks.Open(Filename:=FileToOpen)
+    
+End If
+
+Set wsData = wbk2.Sheets("Data")
+
+Application.ScreenUpdating = False
+ 
+wsDataEndingRow = wsData.Cells(Rows.Count, 1).End(xlUp).Row ' Ending row in column A (first column) !
+ 
+wsData.Cells(1, 41).Value = "Project Number"
+    
+    ' Extracting data !
+    For i = wsDataStartingRow To wsDataEndingRow
+    
+        wsDataCurrentValue = Trim(wsData.Cells(i, 39).Value2)
+        
+        If regexObject.Test(wsDataCurrentValue) Then
+            
+            ' Extract all results !
+            Set regexAllResults = regexObject.Execute(wsDataCurrentValue)
+            
+            ' Output all results from column B !
+            For j = 0 To regexAllResults.Count - 1 'captures the count of project numbers and put it in different columns
+            
+                wsData.Cells(i, j + 41).Value2 = regexAllResults.Item(j)
+            
+            Next j
+        
+        End If
+    
+    Next i
+    
+    Cells(2, 41).Select
+    
+Set drange = Range(Cells(2, 41), Cells(wsDataEndingRow, 41))
+
+For Each cell In drange
+
+If cell.Value = Empty Then
+
+cell.Value = "N/A"
+
+End If
+
+Next cell
+
+Application.ScreenUpdating = True
+ 
+End Sub
+
