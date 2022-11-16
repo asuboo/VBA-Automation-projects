@@ -39,3 +39,6 @@ b. To take out the unique 'Parent id'(in Col A) related to the 'Product Type'(in
 
 c. To take out the unique 'Child id'(in Col B in 'Project Info' sheet) related to the 'Parent ID'(in Col A in the 'Project info' sheet) 
 =IF(IFERROR(SORT(UNIQUE(FILTER('Project Info'!$B$2:$B$400,('Project Info'!$A$2:$A$400='Project Transactions'!E3),"")),,1),"No Data") = 0,"",IFERROR(SORT(UNIQUE(FILTER('Project Info'!$B$2:$B$400,('Project Info'!$A$2:$A$400='Project Transactions'!E3),"")),,1),"No Data"))
+
+
+If you wish to test whether a worksheet cell is empty in VBA, you can not use the worksheet function called ISBLANK. In VBA, you must use the ISEMPTY function.
