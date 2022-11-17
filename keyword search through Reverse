@@ -1,0 +1,86 @@
+Option Explicit
+Sub kisearch()
+' Col H as PSD(date), Col O  has TRIA Alert Sent Time(date through work notes search in reverse) & Col P has TRIA Duration
+Dim wbk1 As Workbook
+Dim RDsheet As Worksheet
+Dim LrowT1 As Long ' to get the last row
+Dim x As Integer ' for loop counter
+Dim str As String ' to hold the work notes string
+Dim n As Long ' the starting char of the required string from below
+Dim TL As String
+
+Set wbk1 = ThisWorkbook
+Set RDsheet = wbk1.Worksheets("Raw Data")
+
+Application.ScreenUpdating = False
+
+RDsheet.Select
+On Error Resume Next
+ActiveSheet.ShowAllData
+On Error GoTo 0
+
+LrowT1 = RDsheet.Cells(Rows.Count, 1).End(xlUp).Row
+RDsheet.Range(Cells(2, 15), Cells(LrowT1, 16)).Select
+Selection.ClearContents
+RDsheet.Range(Cells(2, 27), Cells(LrowT1, 28)).Select
+Selection.ClearContents
+
+For x = 2 To LrowT1
+
+    RDsheet.Range("N" & x).Activate
+    str = ActiveCell.Value
+    'Do While IsEmpty(ActiveCell.Value) = False
+    'If Not ActiveCell.Value Is Nothing Then
+    'If IsEmpty(ActiveCell.Value) = False Then
+     'If IsEmpty(ActiveCell.Value) = False Then
+    'TL = Len(ActiveCell.Value)
+        'ActiveCell.Find(What:="Mid Server (Work notes)",
+     'If InStrRev(ActiveCell.Value, "Mid Server (Work notes)") > 0 Then
+        'RDsheet.Range("W" & x).Value = "Found"
+     'If IsEmpty(ActiveCell.Value) = False Then
+     If IsEmpty(ActiveCell.Value) = False And InStrRev(str, "Mid Server (Work notes)") > 0 Then
+        n = InStrRev(str, "Mid Server (Work notes)")
+     'RDsheet.Range("W" & x).Value = Left(str, n - 5)
+        On Error Resume Next
+    'Range("O" & x).Value = Mid(str, n - 22, 19)    'Left(str, n - 3) unable to get as date that impedes the date diff
+    'Range("T" & x).Value = Mid(str, n - 22, 2) 'dd
+    'Range("U" & x).Value = Mid(str, n - 19, 2) 'mm
+    'Range("V" & x).Value = Mid(str, n - 16, 4) 'yyyy
+    'Range("W" & x).Value = Mid(str, n - 11, 2) 'hh
+    'Range("X" & x).Value = Mid(str, n - 8, 2) 'min
+    'Range("Y" & x).Value = Mid(str, n - 5, 2) 'ss
+    
+    'Range("AA" & x).Value = DateValue(Mid(str, n - 22, 10))
+        'RDsheet.Range("AA" & x).Value = Application.WorksheetFunction.Text(DateValue(Mid(str, n - 22, 10)), "dd/mm/yyyy") ' capture the date portion
+        
+        RDsheet.Range("AA" & x).Value = DateValue(Mid(str, n - 22, 10))
+        RDsheet.Range("AB" & x).Value = TimeValue(Mid(str, n - 11, 8)) ' capture the time portion
+    'Range("O" & x).Value = Application.WorksheetFunction.Date(Range("AA" & x).Value) + Application.WorksheetFunction.Time(Range("AB" & x).Value) not populating any values
+    
+    
+        RDsheet.Range("O" & x).Value = RDsheet.Range("AA" & x).Value + RDsheet.Range("AB" & x).Value
+    
+        Range("P" & x).Value = DateDiff("h", Range("O" & x).Value, Range("H" & x).Value) ' =HOUR(#REF!)+(MINUTE(#REF!))/60+(SECOND(#REF!))/(3600)
+    
+    
+    Else
+    End If
+        
+    'str = activecell.Find(what:="Mid Server (Work notes)",
+    
+         
+Next x
+
+RDsheet.Range(Cells(2, 15), Cells(LrowT1, 15)).Select
+Selection.NumberFormat = "dd/mm/yyyy hh:mm:ss"
+RDsheet.Range(Cells(2, 16), Cells(LrowT1, 16)).Select
+Selection.NumberFormat = "0"
+RDsheet.Range(Cells(2, 27), Cells(LrowT1, 28)).Select
+Selection.ClearContents
+
+Application.ScreenUpdating = True
+
+On Error GoTo 0
+
+End Sub
+
