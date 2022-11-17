@@ -43,7 +43,7 @@ c. To take out the unique 'Child id'(in Col B in 'Project Info' sheet) related t
 
 'If you wish to test whether a worksheet cell is empty in VBA, you can not use the worksheet function called ISBLANK. In VBA, you must use the ISEMPTY function.
 
-' Requirement - A date time capture in a string; To identify "11/08/2021 14:21:47 - Mid Server (Work notes)"
+' Requirement - A date time capture in a string; To identify the date time from "11/08/2021 14:21:47 - Mid Server (Work notes)"
 Functions used:
 DATE(year,month,day)
 FIND(findtext,withintext,startnum)
