@@ -41,4 +41,18 @@ c. To take out the unique 'Child id'(in Col B in 'Project Info' sheet) related t
 =IF(IFERROR(SORT(UNIQUE(FILTER('Project Info'!$B$2:$B$400,('Project Info'!$A$2:$A$400='Project Transactions'!E3),"")),,1),"No Data") = 0,"",IFERROR(SORT(UNIQUE(FILTER('Project Info'!$B$2:$B$400,('Project Info'!$A$2:$A$400='Project Transactions'!E3),"")),,1),"No Data"))
 
 
-If you wish to test whether a worksheet cell is empty in VBA, you can not use the worksheet function called ISBLANK. In VBA, you must use the ISEMPTY function.
+'If you wish to test whether a worksheet cell is empty in VBA, you can not use the worksheet function called ISBLANK. In VBA, you must use the ISEMPTY function.
+
+' Requirement - A date time capture in a string; To identify "11/08/2021 14:21:47 - Mid Server (Work notes)"
+Functions used:
+DATE(year,month,day)
+FIND(findtext,withintext,startnum)
+MID(text,startnum,number of char)
+TIME(hour,minute,second)
+
+=DATE(MID(J215,(FIND("Mid Server (Work notes)",J215,1)-16),4),
+    MID(J215,(FIND("Mid Server (Work notes)",J215,1)-19),2),
+        MID(J215,(FIND("Mid Server (Work notes)",J215,1)-22),2))
+  +TIME(MID(J215,(FIND("Mid Server (Work notes)",J215,1)-11),2),
+    MID(J215,(FIND("Mid Server (Work notes)",J215,1)-8),2),
+        MID(J215,(FIND("Mid Server (Work notes)",J215,1)-5),2))
