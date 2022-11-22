@@ -1,9 +1,9 @@
 Option Explicit
-Sub kisearch()
-' Col H as PSD(date), Col O  has TRIA Alert Sent Time(date through work notes search in reverse) & Col P has TRIA Duration
+Sub Kisearch()
+' Col H as PSD, Col O  has TRIA Alert Sent Time & Col P has TRIA Duration
 Dim wbk1 As Workbook
 Dim RDsheet As Worksheet
-Dim LrowT1 As Long ' to get the last row
+Dim LrowT1 As Long
 Dim x As Integer ' for loop counter
 Dim str As String ' to hold the work notes string
 Dim n As Long ' the starting char of the required string from below
@@ -60,7 +60,7 @@ For x = 2 To LrowT1
     
         RDsheet.Range("O" & x).Value = RDsheet.Range("AA" & x).Value + RDsheet.Range("AB" & x).Value
     
-        Range("P" & x).Value = DateDiff("h", Range("O" & x).Value, Range("H" & x).Value) ' =HOUR(#REF!)+(MINUTE(#REF!))/60+(SECOND(#REF!))/(3600)
+        Range("P" & x).Value = (DateDiff("n", Range("O" & x).Value, Range("H" & x).Value)) / 60 ' =HOUR(#REF!)+(MINUTE(#REF!))/60+(SECOND(#REF!))/(3600)
     
     
     Else
@@ -74,7 +74,7 @@ Next x
 RDsheet.Range(Cells(2, 15), Cells(LrowT1, 15)).Select
 Selection.NumberFormat = "dd/mm/yyyy hh:mm:ss"
 RDsheet.Range(Cells(2, 16), Cells(LrowT1, 16)).Select
-Selection.NumberFormat = "0"
+Selection.NumberFormat = "0.0"
 RDsheet.Range(Cells(2, 27), Cells(LrowT1, 28)).Select
 Selection.ClearContents
 
