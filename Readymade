@@ -1,3 +1,19 @@
+Excel Formulae - Quick reference:
+
+=SEARCH(find_text, within_text, [start_num]) ---> will provide the position(as a number) of the starting letter of the string you search for
+FIND is case-sensitive, otherwise it is similar to SEARCH
+
+=IF(M68687<DATEVALUE("01-09-2020"),"Before Sept'20","From Sept'20") ---> converts a date represented as a text string into a valid 
+Excel date.For example, the formula =DATEVALUE("01-09-2020") returns a serial number (44075) in the Excel date system.
+
+=INT(<date time value>) ---> returns the integer part of a decimal number by rounding down to the integer. When u put a date time value
+it returns as per the custom date format defined in that cell
+
+=X68780+8-IF(WEEKDAY(X68780)=1,8,WEEKDAY(X68780)) ----> To get the end of the week
+
+=TEXT(X68688,"mmm'yy") ---> to convert a integer date to any text format you need
+
+====================================================================================================
 'Open the Master template
 
 FTO = Application.GetOpenFilename(Title:="Please choose the 'TST Backlog Status Template' ", FileFilter:="Report Files *.xlsb (*.xlsb),")
@@ -9,25 +25,31 @@ Else
     Set wbk1 = Workbooks.Open(Filename:=FTO)
     
 End If
-
+==============================================================================================================
 'To get the last row
 
  LrowT1 = Dsheet.Cells(Rows.Count, 1).End(xlUp).Row
  Lrow1 = wbk2.Worksheets(1).Cells(Rows.Count, 1).End(xlUp).Row
  
+===============================================================================================================
  'Best practises:
  
 Application.ScreenUpdating = False
 Application.DisplayAlerts = False
 
+================================================================================================================
+
 ' Copy visible rows from the Master template and paste it in a different sheet
 
  MDsheet.UsedRange.SpecialCells(xlCellTypeVisible).Copy nwsh.Range("A1")
  
+ =========================================================================================================
+ 
  ' To protect the sheet
  
  ActiveSheet.Protect Password:="openup", DrawingObjects:=True, Contents:=True, Scenarios:=True, AllowSorting:=True, AllowFiltering:=True
- 
+
+=============================================================================================================
 ' To create dependent dropdown list in excel in the 'Project Transactions' sheet; cell E2 - product type; cell E3 - Parent ID, cell E4 - Child ID
 
 eg. 'Product Type' ---> 'Parent ID' --> 'Child ID'
@@ -40,9 +62,13 @@ b. To take out the unique 'Parent id'(in Col A) related to the 'Product Type'(in
 c. To take out the unique 'Child id'(in Col B in 'Project Info' sheet) related to the 'Parent ID'(in Col A in the 'Project info' sheet) 
 =IF(IFERROR(SORT(UNIQUE(FILTER('Project Info'!$B$2:$B$400,('Project Info'!$A$2:$A$400='Project Transactions'!E3),"")),,1),"No Data") = 0,"",IFERROR(SORT(UNIQUE(FILTER('Project Info'!$B$2:$B$400,('Project Info'!$A$2:$A$400='Project Transactions'!E3),"")),,1),"No Data"))
 
+=====================================================================================================================
+Tips:
 
-'If you wish to test whether a worksheet cell is empty in VBA, you can not use the worksheet function called ISBLANK. In VBA, you must use the ISEMPTY function.
+'If you wish to test whether a worksheet cell is empty in VBA, you can not use the worksheet function called ISBLANK. 
+In VBA, you must use the ISEMPTY function.
 
+====================================================================================================================
 ' Requirement - A date time capture in a string; To identify the date time from "11/08/2021 14:21:47 - Mid Server (Work notes)"
 Functions used:
 DATE(year,month,day)
@@ -56,3 +82,4 @@ TIME(hour,minute,second)
   +TIME(MID(J215,(FIND("Mid Server (Work notes)",J215,1)-11),2),
     MID(J215,(FIND("Mid Server (Work notes)",J215,1)-8),2),
         MID(J215,(FIND("Mid Server (Work notes)",J215,1)-5),2))
+============================================================================================================================
